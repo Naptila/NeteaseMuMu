@@ -89,7 +89,7 @@ jobs:
           for attempt in 1 2 3; do
             build_log="$RUNNER_TEMP/gradle-build-$attempt.log"
             set +e
-            bash ./gradlew :app:assembleRelease --no-daemon --no-configuration-cache --stacktrace "-PreleaseVersionName=$version_name" "-PreleaseVersionCode=$GITHUB_RUN_NUMBER" 2>&1 | tee "$build_log"
+            bash ./gradlew :app:assembleRelease --no-daemon --no-configuration-cache --stacktrace "-PreleaseVersionName=$version_name" 2>&1 | tee "$build_log"
             build_status=${PIPESTATUS[0]}
             set -e
 
