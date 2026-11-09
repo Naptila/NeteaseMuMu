@@ -23,8 +23,8 @@ android {
         applicationId = "me.naptila.neteasemumu"
         minSdk = 28
         targetSdk = 37
-        versionCode = providers.gradleProperty("releaseVersionCode").map { it.toInt() }.orElse(1).get()
-        versionName = providers.gradleProperty("releaseVersionName").orElse("1.0").get()
+        versionCode = providers.gradleProperty("releaseVersionCode").map { it.toInt() }.orElse(4).get()
+        versionName = providers.gradleProperty("releaseVersionName").orElse("1.0.1").get()
     }
 
     signingConfigs {
