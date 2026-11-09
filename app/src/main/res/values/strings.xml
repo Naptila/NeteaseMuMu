@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">NeteaseMuMu</string>
+    <string name="xposed_description">网易MUMU渠道</string>
+</resources>

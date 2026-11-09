@@ -1,0 +1,23 @@
+# Add project specific R8 rules here.
+# AGP will combine all keep rule files in src/main/keepRules to pass to R8
+#
+# For more details, see
+#   https://d.android.com/r/tools/r8/keep-rules
+
+# If your project uses WebView with JS, uncomment the following
+# and specify the fully qualified class name to the JavaScript interface
+# class:
+#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
+#   public *;
+#}
+
+# Loaded by its class name from assets/xposed_init.
+-keep class me.naptila.neteasemumu.XposedInit {
+    *;
+}
+
+# Channel methods returned from Class.getDeclaredMethod/getMethod hooks.
+-keepclassmembers class me.naptila.neteasemumu.hook.hooks.ChannelHook {
+    public static java.lang.String getChannel(java.io.File);
+    public static java.lang.String getCustomCpsChannel(java.lang.Object[]);
+}
