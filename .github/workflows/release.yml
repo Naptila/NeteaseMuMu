@@ -16,6 +16,9 @@ jobs:
   release:
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    defaults:
+      run:
+        shell: bash
 
     steps:
       - name: Check out tagged source
@@ -42,7 +45,11 @@ jobs:
         with:
           distribution: temurin
           java-version: '25'
-          cache: gradle
+
+      - name: Set up Gradle cache
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-read-only: false
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v4
@@ -75,7 +82,24 @@ jobs:
             echo "::error::The tag must contain a version name"
             exit 1
           fi
-          bash ./gradlew :app:assembleRelease --no-daemon --no-configuration-cache "-PreleaseVersionName=$version_name" "-PreleaseVersionCode=$GITHUB_RUN_NUMBER"
+          network_errors='(Received status code|HTTP response code:)[[:space:]]*(408|429|500|502|503|504)|Read timed out|SocketTimeoutException|ConnectTimeoutException|UnknownHostException|Connection reset|connect timed out|timeout \([0-9]+ms\)'
+          for attempt in 1 2 3; do
+            build_log="$RUNNER_TEMP/gradle-build-$attempt.log"
+            set +e
+            bash ./gradlew :app:assembleRelease --no-daemon --no-configuration-cache --stacktrace "-PreleaseVersionName=$version_name" "-PreleaseVersionCode=$GITHUB_RUN_NUMBER" 2>&1 | tee "$build_log"
+            build_status=${PIPESTATUS[0]}
+            set -e
+
+            if [[ "$build_status" -eq 0 ]]; then
+              exit 0
+            fi
+            if [[ "$attempt" -eq 3 ]] || ! grep -Eiq "$network_errors" "$build_log"; then
+              exit "$build_status"
+            fi
+
+            echo "::warning::Network download failed on attempt $attempt/3; retrying in $((attempt * 15)) seconds"
+            sleep "$((attempt * 15))"
+          done
 
       - name: Verify and prepare APK
         id: apk
