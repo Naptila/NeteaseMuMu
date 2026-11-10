@@ -1,4 +1,4 @@
-# NeteaseMuMu
+# Netease MuMu
 
 用于在非 MuMu 环境下尝试启用 MuMu 渠道提供的 iOS、Android 平台选择及扫码相关功能。
 
